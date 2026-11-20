@@ -1,0 +1,48 @@
+<view class="family">
+  <view class="title family-title">家庭菜单</view>
+  <view class="tabs">
+    <button size="mini" class="tab {{tab === 'menu' ? 'active' : ''}}" data-tab="menu" bindtap="switchTab">准备菜单</button>
+    <button size="mini" class="tab {{tab === 'orders' ? 'active' : ''}}" data-tab="orders" bindtap="switchTab">收到的点菜单{{orders.length ? ' · ' + orders.length : ''}}</button>
+  </view>
+
+  <block wx:if="{{tab === 'menu'}}">
+    <view class="family-lead muted">从画册选菜，发一张菜单给家人。他们选好后会把点菜单发回微信聊天。</view>
+    <view class="family-panel menu-fields">
+      <label class="family-label" for="menu-title">菜单名称</label>
+      <view class="family-input"><input id="menu-title" maxlength="24" value="{{title}}" placeholder="例如，周末晚饭" bindinput="titleInput" bindblur="remember" /></view>
+      <view class="family-input search-dishes"><input value="{{query}}" placeholder="搜索菜名或分类" bindinput="search" aria-label="搜索菜名或分类" /></view>
+    </view>
+    <view class="family-count">已选 {{selected}} 道菜</view>
+    <view wx:if="{{items.length}}" class="pick-list">
+      <button wx:for="{{items}}" wx:key="id" size="mini" class="dish-choice" data-id="{{item.id}}" bindtap="toggleDish" hover-class="pressed" aria-label="{{(item.checked ? '移除 ' : '加入 ') + item.title}}">
+        <view class="choice-title">
+          <view>{{item.title}}</view>
+          <view class="choice-meta">{{item.category}}</view>
+        </view>
+        <view class="selection-mark {{item.checked ? 'selected' : ''}}">{{item.checked ? '✓' : ''}}</view>
+      </button>
+    </view>
+    <view wx:else class="empty muted">{{total ? '没有找到匹配的菜。' : '画册还是空的，先记一道菜。'}}</view>
+    <view class="family-actions">
+      <button wx:if="{{shareReady}}" class="primary" open-type="share" hover-class="pressed">发菜单给家人</button>
+      <button wx:if="{{shareReady}}" class="secondary" bindtap="preview" hover-class="pressed">预览家人看到的菜单</button>
+      <button wx:if="{{selected}}" class="secondary" bindtap="copyMenu" hover-class="pressed">复制菜单文字</button>
+    </view>
+    <view wx:if="{{selected && !shareReady}}" class="family-error">这张菜单的内容太长，请少选几道菜或缩短菜单名称。</view>
+  </block>
+
+  <block wx:else>
+    <view class="family-lead muted">在微信里打开家人发回的点菜单，再点「收下点菜单」，以后可从这里查看。</view>
+    <view wx:if="{{orders.length}}" class="pick-list">
+      <button wx:for="{{orders}}" wx:key="id" size="mini" class="dish-choice" data-id="{{item.id}}" bindtap="openOrder" hover-class="pressed">
+        <view class="choice-title">
+          <view>{{item.guest || '家人'}} · {{item.title}}</view>
+          <view class="choice-meta">{{item.count}} 道菜 · {{item.received}}</view>
+          <view class="order-preview">{{item.dishes}}</view>
+        </view>
+        <text class="muted">›</text>
+      </button>
+    </view>
+    <view wx:else class="empty muted">还没有收下的点菜单。</view>
+  </block>
+</view>

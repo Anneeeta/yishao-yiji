@@ -1,0 +1,86 @@
+<view class="gallery">
+  <view class="header">
+    <view>
+      <view class="kicker">私人食谱画册</view>
+      <view class="title headline">我的食谱</view>
+    </view>
+    <view class="header-actions">
+      <button size="mini" class="compact backup-link family-link" bindtap="familyMenu" hover-class="pressed">家庭菜单</button>
+      <button size="mini" class="compact backup-link" bindtap="backup" hover-class="pressed">备份</button>
+    </view>
+  </view>
+
+  <view class="search">
+    <view class="magnifier" />
+    <input placeholder="搜索菜名或食材" placeholder-class="muted" value="{{query}}" bindinput="search" confirm-type="search" aria-label="搜索菜名或食材" />
+    <button wx:if="{{query}}" size="mini" class="compact clear" bindtap="clearSearch" aria-label="清空搜索">×</button>
+  </view>
+
+  <view class="browse-tools">
+    <button size="mini" class="compact browse-control {{panel === 'categories' ? 'control-active' : ''}}" data-panel="categories" bindtap="togglePanel" hover-class="pressed" aria-label="分类筛选">
+      <image class="control-icon" src="/assets/icon-category.png" mode="aspectFit" />
+      <text class="control-label">{{selected || '分类筛选'}}</text>
+      <view class="chevron {{panel === 'categories' ? 'chevron-up' : ''}}" />
+    </button>
+    <button size="mini" class="compact browse-control {{panel === 'sort' ? 'control-active' : ''}}" data-panel="sort" bindtap="togglePanel" hover-class="pressed" aria-label="食谱排序">
+      <image class="control-icon" src="/assets/icon-sort.png" mode="aspectFit" />
+      <text class="control-label">{{sortOptions[sortIndex]}}</text>
+      <view class="chevron {{panel === 'sort' ? 'chevron-up' : ''}}" />
+    </button>
+  </view>
+
+  <view wx:if="{{panel === 'categories'}}" class="category-grid">
+    <button size="mini" class="compact chip {{selected === '' ? 'on' : ''}}" bindtap="filter" hover-class="pressed">全部</button>
+    <button wx:for="{{categories}}" wx:key="*this" size="mini" class="compact chip {{selected === item ? 'on' : ''}}" data-category="{{item}}" bindtap="filter" hover-class="pressed">{{item}}</button>
+  </view>
+  <view wx:elif="{{panel === 'sort'}}" class="sort-options">
+    <button wx:for="{{sortOptions}}" wx:key="*this" size="mini" class="compact sort-option {{sortIndex === index ? 'sort-selected' : ''}}" data-index="{{index}}" bindtap="chooseSort" hover-class="pressed">
+      <text>{{item}}</text>
+      <view wx:if="{{sortIndex === index}}" class="selected-check" />
+    </button>
+  </view>
+  <scroll-view wx:else scroll-x class="filters" enhanced show-scrollbar="{{false}}">
+    <view class="filter-row">
+      <button size="mini" class="compact chip {{selected === '' ? 'on' : ''}}" bindtap="filter">全部</button>
+      <button wx:for="{{categories}}" wx:key="*this" size="mini" class="compact chip {{selected === item ? 'on' : ''}}" data-category="{{item}}" bindtap="filter">{{item}}</button>
+    </view>
+  </scroll-view>
+
+  <view class="collection">
+    <text class="muted">{{matches}} 道食谱</text>
+    <button size="mini" class="compact favorites {{favorites ? 'is-active' : ''}}" bindtap="toggleFavorites" hover-class="pressed" aria-label="{{favorites ? '查看全部食谱' : '只看收藏'}}">
+      <image class="favorites-icon" src="{{favorites ? '/assets/heart-active.png' : '/assets/heart-outline.png'}}" mode="aspectFit" />
+      <text>只看收藏</text>
+    </button>
+  </view>
+
+  <view wx:if="{{error}}" class="empty">
+    <view class="title empty-title">暂时无法读取食谱</view>
+    <button class="secondary" bindtap="reset">重试</button>
+  </view>
+  <view wx:elif="{{items.length}}" class="grid">
+    <view wx:for="{{items}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open" hover-class="pressed" hover-stop-propagation>
+      <view class="cover">
+        <image wx:if="{{item.coverPath}}" class="image" src="{{item.coverPath}}" mode="aspectFill" lazy-load="{{true}}" />
+        <view wx:else class="placeholder title">食</view>
+        <button size="mini" class="compact heart {{item.favorite ? 'saved' : ''}}" data-id="{{item.id}}" catchtap="favorite" hover-class="heart-pressed" hover-stop-propagation aria-label="{{item.favorite ? '取消收藏' : '收藏'}}">
+          <image class="heart-icon" src="{{item.favorite ? '/assets/heart-filled-white.png' : '/assets/heart-white.png'}}" mode="aspectFit" />
+        </button>
+      </view>
+      <view class="card-copy">
+        <view class="card-meta">{{item.category}}{{item.duration ? ' · ' + item.duration : ''}}</view>
+        <view class="title card-title">{{item.title}}</view>
+        <text wx:if="{{item.example}}" class="example">示例食谱</text>
+      </view>
+    </view>
+  </view>
+  <view wx:else class="empty">
+    <view class="title empty-title">{{count ? '没有找到食谱' : '画册还是空的'}}</view>
+    <view class="muted">{{count ? '试试其他菜名、食材或分类。' : '添加一道自己做过的菜。'}}</view>
+    <button class="primary" wx:if="{{count}}" bindtap="reset">重置筛选</button>
+    <button class="primary" wx:else bindtap="add">记一道菜</button>
+  </view>
+</view>
+<view class="dock">
+  <button class="primary new" bindtap="add" hover-class="pressed"><text class="plus">＋</text>记一道菜</button>
+</view>

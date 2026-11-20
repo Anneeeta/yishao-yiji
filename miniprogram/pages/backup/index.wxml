@@ -1,0 +1,16 @@
+<view class="page-inset">
+  <view class="title headline">备份与恢复</view>
+  <view class="intro muted">食谱和照片保存在这台设备。换手机前，把备份文件发送到文件传输助手或自己的聊天里。</view>
+  <view class="panel">
+    <view class="title panel-title">导出画册</view>
+    <view class="muted">备份包含食谱、照片、收藏和自定义分类。食谱较多时会拆成多个文件。</view>
+    <button class="primary" bindtap="prepare" disabled="{{busy}}">{{files.length ? '重新生成备份' : '生成备份文件'}}</button>
+    <button wx:for="{{files}}" wx:key="path" class="secondary file" data-index="{{index}}" bindtap="share" disabled="{{busy}}">发送 {{item.name}}</button>
+  </view>
+  <view class="panel">
+    <view class="title panel-title">恢复食谱</view>
+    <view class="muted">从微信聊天中选择备份文件。已有食谱会保留；有多份文件时请逐一导入。</view>
+    <button class="secondary" bindtap="importFile" disabled="{{busy}}">选择聊天里的备份</button>
+  </view>
+  <button class="remove-samples" bindtap="removeExamples" disabled="{{busy}}">清除示例食谱</button>
+</view>

@@ -1,0 +1,51 @@
+<view class="page-inset">
+  <block wx:if="{{recipe}}">
+    <view wx:if="{{recipe.coverPath}}" class="hero">
+      <image class="image" src="{{recipe.coverPath}}" mode="aspectFill" bindtap="preview" data-path="{{recipe.coverPath}}" aria-label="查看成品照片" />
+    </view>
+    <view class="heading">
+      <view class="meta">{{recipe.category}}{{recipe.duration ? ' · ' + recipe.duration : ''}}{{recipe.servings ? ' · ' + recipe.servings : ''}}</view>
+      <view class="title recipe-name">{{recipe.title}}</view>
+      <view class="sample muted" wx:if="{{recipe.example}}">示例食谱</view>
+      <view class="actions">
+        <button class="secondary favorite-action" bindtap="favorite" hover-class="pressed">
+          <image class="favorite-icon" src="{{recipe.favorite ? '/assets/heart-active.png' : '/assets/heart-outline.png'}}" mode="aspectFit" />
+          <text>{{recipe.favorite ? '已收藏' : '收藏'}}</text>
+        </button>
+        <button class="primary" bindtap="edit" hover-class="pressed">编辑食谱</button>
+      </view>
+    </view>
+
+    <view wx:if="{{recipe.ingredients.length}}" class="section">
+      <view class="title section-title">食材</view>
+      <button wx:for="{{recipe.ingredients}}" wx:key="key" class="ingredient {{checked[index] ? 'checked' : ''}}" data-index="{{index}}" bindtap="toggleIngredient">
+        <view class="tick">{{checked[index] ? '✓' : ''}}</view>
+        <view class="ingredient-name">
+          <view>{{item.name}}<text class="ingredient-status {{item.optional ? 'ingredient-optional' : 'muted'}}">{{item.optional ? '可选' : '必需'}}</text></view>
+          <text wx:if="{{item.substitute}}" class="ingredient-alternative muted">可用{{item.substitute}}替换</text>
+        </view>
+        <text class="amount muted">{{item.amount}}</text>
+      </button>
+    </view>
+    <view wx:if="{{recipe.steps.length}}" class="section">
+      <view class="title section-title">做法</view>
+      <view wx:for="{{recipe.steps}}" wx:key="key" class="step">
+        <view class="step-index">{{index + 1}}</view>
+        <view class="step-content">
+          <view wx:if="{{item.text}}" class="body-copy">{{item.text}}</view>
+          <image wx:if="{{item.photoPath}}" class="step-photo" src="{{item.photoPath}}" mode="widthFix" lazy-load="{{true}}" bindtap="preview" data-path="{{item.photoPath}}" />
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{recipe.notes}}" class="notes">
+      <view class="title section-title">下次这样做</view>
+      <view class="body-copy">{{recipe.notes}}</view>
+    </view>
+    <view wx:if="{{!recipe.ingredients.length && !recipe.steps.length && !recipe.notes}}" class="muted">你可以在编辑页继续补充食材、做法和心得。</view>
+    <button class="delete" bindtap="remove">删除食谱</button>
+  </block>
+  <view wx:else class="empty">
+    <view class="title empty-title">{{error ? '暂时无法读取食谱' : '找不到这份食谱'}}</view>
+    <button class="primary" bindtap="back">回到画册</button>
+  </view>
+</view>

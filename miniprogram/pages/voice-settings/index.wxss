@@ -1,0 +1,9 @@
+.headline { font-size: 53rpx; margin: 3rpx 0 12rpx; }
+.intro { line-height: 1.65; font-size: 25rpx; margin-bottom: 20rpx; }
+.panel { padding: 24rpx; border: 1rpx solid #dce0cf; border-radius: 19rpx; background: #fffdf6; margin-bottom: 19rpx; }
+.section-title { font-size: 34rpx; margin-bottom: 12rpx; }
+.field + .field { margin-top: 14rpx; }
+.field label { font-size: 24rpx; display: block; margin-bottom: 7rpx; }
+.input-box { display: flex; align-items: center; min-height: 76rpx; padding: 0 14rpx; border: 1rpx solid #dce0cf; background: #f8f7ef; border-radius: 13rpx; }
+.input-box input { width: 100%; padding: 0; min-height: 0; height: 42rpx; line-height: 42rpx; font-size: 26rpx; }
+button.settings-save { width: 100%; }

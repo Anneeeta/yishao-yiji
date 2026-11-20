@@ -1,0 +1,46 @@
+<view class="family">
+  <block wx:if="{{order}}">
+    <view class="title family-title">{{order.guest ? order.guest + '的点菜单' : '家庭点菜单'}}</view>
+    <view class="family-lead muted">{{order.title}} · {{order.dishes.length}} 道菜</view>
+    <view class="family-panel">
+      <view class="title section-title">想吃这些</view>
+      <view wx:for="{{dishes}}" wx:key="title" class="order-dish">
+        <navigator wx:if="{{item.id}}" class="line" url="/pages/recipe/index?id={{item.id}}" hover-class="pressed" aria-label="{{'查看' + item.title + '的做法'}}">
+          <text class="number">{{index + 1}}</text><text class="line-title">{{item.title}}</text><text class="recipe-link">看做法 ›</text>
+        </navigator>
+        <view wx:else class="line"><text class="number">{{index + 1}}</text><text class="line-title">{{item.title}}</text></view>
+        <view wx:if="{{item.issue}}" class="dish-issue">{{item.issue}}</view>
+      </view>
+      <view wx:if="{{order.note}}" class="order-note">备注：{{order.note}}</view>
+    </view>
+    <view class="family-panel">
+      <button size="mini" class="shopping-heading" bindtap="toggleShopping" hover-class="pressed">
+        <text class="title section-title">买菜清单</text>
+        <text class="recipe-link">{{shoppingOpen ? '收起' : '展开'}} · {{shopping.length}} 项</text>
+      </button>
+      <block wx:if="{{shoppingOpen}}">
+        <view wx:if="{{incomplete}}" class="help-text">清单只计入上方已找到且填有食材的食谱。</view>
+        <view wx:if="{{!shopping.length}}" class="help-text">暂无可列出的食材。</view>
+        <button wx:for="{{shopping}}" wx:key="key" size="mini" class="dish-choice grocery" data-index="{{index}}" bindtap="toggleItem" hover-class="pressed" aria-label="{{item.name + '，' + item.amount + (item.checked ? '，已备好' : '，待准备')}}">
+          <view class="selection-mark {{item.checked ? 'selected' : ''}}">{{item.checked ? '✓' : ''}}</view>
+          <view class="choice-title">
+            <view class="{{item.checked ? 'ready' : ''}}">{{item.name}}<text wx:if="{{item.optional}}" class="optional">可选</text></view>
+            <view wx:if="{{item.substitute}}" class="choice-meta">可用{{item.substitute}}替换</view>
+          </view>
+          <text class="quantity {{item.checked ? 'ready' : ''}}">{{item.amount}}</text>
+        </button>
+      </block>
+    </view>
+    <view class="family-actions">
+      <button wx:if="{{!accepted}}" class="primary" bindtap="accept" hover-class="pressed">收下点菜单</button>
+      <button wx:else class="primary" bindtap="inbox" hover-class="pressed">查看收到的点菜单</button>
+      <button class="secondary" bindtap="copy" hover-class="pressed">复制点菜单文字</button>
+    </view>
+    <view wx:if="{{accepted}}" class="help-text">已保存在这台设备的「家庭菜单」。</view>
+  </block>
+  <view wx:else class="empty">
+    <view class="title empty-title">没有打开这份点菜单</view>
+    <view class="muted">请重新打开家人发来的微信卡片。</view>
+    <button class="primary" bindtap="inbox">查看收到的点菜单</button>
+  </view>
+</view>

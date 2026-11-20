@@ -1,0 +1,6 @@
+@import "../../lib/family-menu.wxss";
+.tabs { display: flex; gap: 5rpx; padding: 5rpx; margin: 19rpx 0; border-radius: 15rpx; background: #e9edde; }
+button.tab { flex: 1; min-width: 0; width: auto; margin: 0; padding: 14rpx 5rpx; border-radius: 11rpx; font-size: 25rpx; line-height: 1.28; color: #294633; }
+button.tab.active { background: #294633; color: #fffdf5; }
+.search-dishes { margin-top: 12rpx; }
+.order-preview { margin-top: 5rpx; color: #4b614a; font-size: 24rpx; }

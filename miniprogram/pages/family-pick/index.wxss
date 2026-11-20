@@ -1,0 +1,3 @@
+@import "../../lib/family-menu.wxss";
+.note-label { margin-top: 15rpx; }
+.family-note { width: 100%; height: 112rpx; padding: 12rpx 15rpx; border: 1rpx solid #dce0cf; border-radius: 13rpx; background: #f8f7ee; font-size: 26rpx; line-height: 1.5; }

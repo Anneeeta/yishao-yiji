@@ -1,0 +1,97 @@
+<view wx:if="{{!unavailable}}" class="page-inset editor">
+  <button wx:if="{{!form.id}}" class="secondary voice-entry" bindtap="openVoice" disabled="{{busy}}">食谱助手 · 语音和文字</button>
+  <view class="cover-field">
+    <button class="photo-button {{coverPath ? 'with-photo' : ''}}" bindtap="pickPhoto" disabled="{{busy}}" aria-label="{{coverPath ? '更换封面' : '添加成品照片'}}">
+      <image wx:if="{{coverPath}}" class="image" src="{{coverPath}}" mode="aspectFill" />
+      <text wx:if="{{coverPath}}" class="replace">更换封面</text>
+      <block wx:else><text class="photo-plus">＋</text><text>添加成品照片</text></block>
+    </button>
+    <button wx:if="{{coverPath}}" class="text-button" bindtap="removePhoto" disabled="{{busy}}">移除封面</button>
+  </view>
+
+  <view class="field">
+    <label for="title">菜名</label>
+    <view class="input-field"><input id="title" placeholder="例如，番茄炒蛋" value="{{form.title}}" data-field="title" bindinput="input" maxlength="44" /></view>
+  </view>
+  <view class="field">
+    <view class="category-heading">
+      <text class="label">分类</text>
+      <view class="category-tools">
+        <button wx:if="{{!addingCategory}}" size="mini" class="category-action" bindtap="openCategory">＋ 新建分类</button>
+        <button size="mini" class="category-action" bindtap="toggleManageCategories">{{managingCategories ? '完成' : '管理分类'}}</button>
+      </view>
+    </view>
+    <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="category">
+      <view class="picker-value">{{form.category}}<text class="muted">⌄</text></view>
+    </picker>
+    <view wx:if="{{addingCategory}}" class="category-form">
+      <view class="input-field"><input placeholder="例如，烘焙" value="{{categoryDraft}}" maxlength="{{maxCategoryLength}}" bindinput="inputCategory" bindconfirm="saveCategory" confirm-type="done" focus="{{true}}" aria-label="新分类名称" /></view>
+      <view class="category-buttons">
+        <button size="mini" class="category-action" bindtap="closeCategory">取消</button>
+        <button size="mini" class="category-action category-save" bindtap="saveCategory" disabled="{{!categoryDraft || busy}}">添加分类</button>
+      </view>
+    </view>
+    <view wx:if="{{managingCategories}}" class="category-list">
+      <view wx:for="{{categories}}" wx:key="*this" class="category-row">
+        <text class="category-name">{{item}}</text>
+        <text wx:if="{{item === fallbackCategory}}" class="muted category-default">默认归类</text>
+        <button wx:else size="mini" class="category-action category-delete" data-category="{{item}}" bindtap="deleteCategory" aria-label="{{'删除分类 ' + item}}">删除</button>
+      </view>
+    </view>
+  </view>
+  <view class="split">
+    <view class="field">
+      <label for="duration">耗时</label>
+      <view class="input-field"><input id="duration" placeholder="例如，20 分钟" value="{{form.duration}}" data-field="duration" bindinput="input" maxlength="16" /></view>
+    </view>
+    <view class="field">
+      <label for="servings">分量</label>
+      <view class="input-field"><input id="servings" placeholder="例如，2 人份" value="{{form.servings}}" data-field="servings" bindinput="input" maxlength="16" /></view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <view class="title section-title">食材</view>
+      <view class="ingredient-tools">
+        <button size="mini" class="text-button" bindtap="toggleIngredientOptions">{{ingredientOptions ? '收起选项' : '可选与替代'}}</button>
+        <button size="mini" class="text-button" data-section="ingredients" bindtap="addRow" disabled="{{form.ingredients.length >= maxIngredients}}">＋ 添加食材</button>
+      </view>
+    </view>
+    <view wx:for="{{form.ingredients}}" wx:key="key" class="ingredient-row">
+      <view class="input-field"><input placeholder="食材名称" value="{{item.name}}" data-section="ingredients" data-index="{{index}}" data-field="name" bindinput="inputRow" maxlength="60" aria-label="食材名称" /></view>
+      <view class="input-field"><input placeholder="用量" value="{{item.amount}}" data-section="ingredients" data-index="{{index}}" data-field="amount" bindinput="inputRow" maxlength="40" aria-label="食材用量" /></view>
+      <button size="mini" class="remove-row" bindtap="deleteRow" data-section="ingredients" data-index="{{index}}" disabled="{{busy}}" aria-label="移除食材">×</button>
+      <view wx:if="{{ingredientOptions}}" class="ingredient-options">
+        <view class="optional-toggle">
+          <text>{{item.optional ? '可选' : '必需'}}</text>
+          <switch checked="{{item.optional}}" data-index="{{index}}" bindchange="toggleOptional" color="#426b4b" aria-label="可省略此食材" />
+        </view>
+        <view class="input-field"><input placeholder="可用什么替换" value="{{item.substitute}}" data-section="ingredients" data-index="{{index}}" data-field="substitute" bindinput="inputRow" maxlength="{{maxSubstituteLength}}" aria-label="替代品" /></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <view class="title section-title">做法</view>
+      <button size="mini" class="text-button" data-section="steps" bindtap="addRow" disabled="{{form.steps.length >= maxSteps}}">＋ 添加步骤</button>
+    </view>
+    <view wx:for="{{form.steps}}" wx:key="key" class="step">
+      <view class="step-head"><text>第 {{index + 1}} 步</text><button size="mini" class="remove-row" bindtap="deleteRow" data-section="steps" data-index="{{index}}" disabled="{{busy}}" aria-label="移除步骤">×</button></view>
+      <textarea placeholder="记下这一步的做法" value="{{item.text}}" data-section="steps" data-index="{{index}}" data-field="text" bindinput="inputRow" maxlength="500" />
+      <image wx:if="{{stepPaths[index]}}" class="step-photo" src="{{stepPaths[index]}}" mode="aspectFill" />
+      <view class="step-actions">
+        <button size="mini" class="text-button" bindtap="pickPhoto" data-index="{{index}}" disabled="{{busy}}">{{stepPaths[index] ? '更换步骤图' : '＋ 步骤图'}}</button>
+        <button wx:if="{{stepPaths[index]}}" size="mini" class="text-button" bindtap="removePhoto" data-index="{{index}}" disabled="{{busy}}">移除照片</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <label class="title section-title" for="notes">下次这样做</label>
+    <textarea id="notes" placeholder="记下火候、口味或想改的地方" value="{{form.notes}}" data-field="notes" bindinput="input" maxlength="1200" />
+  </view>
+</view>
+<view wx:if="{{unavailable}}" class="page-inset"><view class="empty">找不到可编辑的食谱</view></view>
+<view wx:else class="dock"><button class="primary" bindtap="save" disabled="{{busy}}" hover-class="pressed">{{busy ? '正在处理图片…' : '保存食谱'}}</button></view>

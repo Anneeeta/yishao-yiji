@@ -1,0 +1,10 @@
+@import "../../lib/family-menu.wxss";
+.section-title { margin-bottom: 9rpx; }
+.order-dish + .order-dish { border-top: 1rpx solid #e7e8dc; }
+.recipe-link, .optional { color: #466b4c; font-size: 24rpx; }
+.dish-issue { margin: -6rpx 0 12rpx 44rpx; color: #695e4f; font-size: 23rpx; }
+button.shopping-heading { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 5rpx 0; }
+.shopping-heading .section-title { margin: 0; }
+.optional { margin-left: 10rpx; }
+.quantity { max-width: 42%; overflow-wrap: anywhere; text-align: right; }
+.ready { text-decoration: line-through; color: #687562; }

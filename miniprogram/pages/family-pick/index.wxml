@@ -1,0 +1,39 @@
+<view class="family">
+  <view wx:if="{{!menu}}" class="empty">
+    <view class="title empty-title">没有打开这张菜单</view>
+    <view class="muted">请从微信聊天里重新打开菜单卡片。</view>
+    <button class="primary" bindtap="home">回到画册</button>
+  </view>
+  <block wx:elif="{{!order}}">
+    <view class="title family-title">{{menu.title}}</view>
+    <view class="family-lead muted">选出你想吃的菜，可以一次勾选多道。</view>
+    <view class="family-count">已选 {{count}} 道菜</view>
+    <view class="pick-list">
+      <button wx:for="{{items}}" wx:key="index" size="mini" class="dish-choice" data-index="{{index}}" bindtap="toggleDish" hover-class="pressed" aria-label="{{(item.checked ? '移除 ' : '选中 ') + item.title}}">
+        <view class="choice-title">{{item.title}}</view>
+        <view class="selection-mark {{item.checked ? 'selected' : ''}}">{{item.checked ? '✓' : ''}}</view>
+      </button>
+    </view>
+    <view class="family-panel">
+      <label class="family-label" for="guest">怎么称呼你（可选）</label>
+      <view class="family-input"><input id="guest" maxlength="16" value="{{guest}}" placeholder="例如，小宝" bindinput="changeGuest" /></view>
+      <label class="family-label note-label" for="note">备注（可选）</label>
+      <textarea id="note" class="family-note" maxlength="60" value="{{note}}" placeholder="例如，少放辣" bindinput="changeNote" />
+    </view>
+    <view class="family-actions"><button class="primary" bindtap="review" disabled="{{!count}}" hover-class="pressed">查看点菜单</button></view>
+  </block>
+  <block wx:else>
+    <view class="title family-title">{{order.guest ? order.guest + '的点菜单' : '我的点菜单'}}</view>
+    <view class="family-lead muted">{{order.title}} · {{order.dishes.length}} 道菜</view>
+    <view class="family-panel">
+      <view wx:for="{{order.dishes}}" wx:key="*this" class="line"><text class="number">{{index + 1}}</text><text class="line-title">{{item}}</text></view>
+      <view wx:if="{{order.note}}" class="order-note">备注：{{order.note}}</view>
+    </view>
+    <view class="family-actions">
+      <button wx:if="{{canShare}}" class="primary" open-type="share" hover-class="pressed">把点菜单发回去</button>
+      <button class="{{canShare ? 'secondary' : 'primary'}}" bindtap="copyOrder" hover-class="pressed">复制点菜单文字</button>
+      <button class="secondary" bindtap="revise" hover-class="pressed">返回修改</button>
+    </view>
+    <view wx:if="{{!canShare}}" class="family-error">点菜单太长，可以缩短称呼或备注，或复制完整文字发到微信聊天。</view>
+  </block>
+</view>

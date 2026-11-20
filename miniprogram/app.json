@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/gallery/index",
+    "pages/recipe/index",
+    "pages/edit/index",
+    "pages/backup/index",
+    "pages/voice/index",
+    "pages/voice-settings/index",
+    "pages/family-menu/index",
+    "pages/family-pick/index",
+    "pages/family-order/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "一勺一记",
+    "navigationBarBackgroundColor": "#f8f6ee",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f8f6ee"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

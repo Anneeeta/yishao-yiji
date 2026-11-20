@@ -1,0 +1,12 @@
+{
+  "appid": "touristappid",
+  "projectname": "recipe-gallery",
+  "description": "一勺一记 · 私人食谱画册",
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "urlCheck": true
+  }
+}

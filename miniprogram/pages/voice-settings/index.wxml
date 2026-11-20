@@ -1,0 +1,23 @@
+<template name="fields">
+  <view wx:for="{{fields}}" wx:key="key" class="field">
+    <label for="{{item.key}}">{{item.label}}</label>
+    <view class="input-box">
+      <input id="{{item.key}}" value="{{form[item.key]}}" password="{{!!item.secret}}" placeholder="{{item.placeholder}}" data-key="{{item.key}}" bindinput="input" maxlength="512" />
+    </view>
+  </view>
+</template>
+
+<view class="page-inset">
+  <view class="title headline">API 设置</view>
+  <view class="muted intro">已预填硅基流动示例。两个接口也可以使用不同的服务商。Base URL 填到版本路径（如 /v1）即可。</view>
+  <view class="panel">
+    <view class="title section-title">食谱整理</view>
+    <template is="fields" data="{{fields: chatFields, form: form}}" />
+  </view>
+  <view class="panel">
+    <view class="title section-title">语音转写</view>
+    <template is="fields" data="{{fields: speechFields, form: form}}" />
+  </view>
+  <view class="muted intro">Key 保存在这台设备，不随食谱备份导出。录音和文字按你选择的操作发送到相应的服务商。</view>
+  <button class="primary settings-save" bindtap="save">保存设置</button>
+</view>

@@ -1,0 +1,78 @@
+<view class="chat">
+  <view class="chat-header">
+    <view>
+      <view class="title headline">食谱助手</view>
+      <view class="muted chat-status">语音和文字对话</view>
+    </view>
+    <button size="mini" class="small setup" bindtap="settings" disabled="{{!!stage}}">API 设置</button>
+  </view>
+  <scroll-view class="chat-log" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
+    <view class="chat-body">
+      <view class="bubble assistant">今天做了什么？可以先说食材和做法。草稿核对好后，发送「确认」就会保存。</view>
+      <view wx:if="{{!chatReady}}" class="chat-notice muted">先在 API 设置中配置聊天接口。语音转写也需要配置接口。</view>
+      <view wx:for="{{messages}}" wx:key="id" class="bubble {{item.role}}">
+        <image wx:if="{{item.photo}}" class="message-photo" src="{{item.photo}}" mode="aspectFit" data-path="{{item.photo}}" bindtap="previewPhoto" />
+        <view wx:if="{{item.text}}">{{item.text}}</view>
+      </view>
+      <block wx:if="{{pending || pendingPhoto}}">
+        <view class="bubble user">
+          <image wx:if="{{pendingPhoto}}" class="message-photo" src="{{pendingPhoto}}" mode="aspectFit" />
+          <view wx:if="{{pending}}">{{pending}}</view>
+        </view>
+        <view class="bubble assistant waiting">正在回复…</view>
+      </block>
+      <view wx:if="{{error}}" class="chat-notice chat-error">{{error}}。可以从输入框重试。</view>
+
+      <view wx:if="{{draft && !pending && !pendingPhoto}}" class="draft">
+        <view class="draft-header">
+          <image wx:if="{{coverPath}}" class="draft-cover" src="{{coverPath}}" mode="aspectFill" data-path="{{coverPath}}" bindtap="previewPhoto" aria-label="预览食谱封面" />
+          <view class="draft-heading">
+            <view class="muted caption">待确认草稿</view>
+            <view class="title draft-title">{{draft.title}}</view>
+          </view>
+          <button size="mini" class="small setup" bindtap="toggleDraft" disabled="{{!!stage}}">{{draftOpen ? '收起' : '查看草稿'}}</button>
+        </view>
+        <block wx:if="{{draftOpen}}">
+          <view wx:if="{{draft.duration || draft.servings}}" class="draft-meta muted">{{draft.duration}}{{draft.duration && draft.servings ? ' · ' : ''}}{{draft.servings}}</view>
+          <view class="title section-title">食材与调料</view>
+          <view wx:for="{{draft.ingredients}}" wx:key="key" class="ingredient-line">
+            <text class="ingredient-name">{{item.name}}{{item.amount ? ' · ' + item.amount : ''}}{{item.substitute ? '（可用' + item.substitute + '替换）' : ''}}</text>
+            <text class="status {{item.optional ? 'optional' : ''}}">{{item.optional ? '可选' : '必需'}}</text>
+          </view>
+          <view class="title section-title steps-title">做法</view>
+          <view wx:for="{{draft.steps}}" wx:key="key" class="draft-step">
+            <text class="index">{{index + 1}}</text><text class="step-text">{{item.text}}</text>
+          </view>
+          <view wx:if="{{draft.notes}}" class="muted notes">{{draft.notes}}</view>
+          <button wx:if="{{hasChatCover}}" size="mini" class="small setup remove-cover" bindtap="removeChatCover" disabled="{{!!stage}}">移除聊天封面</button>
+          <view class="confirm-hint">核对完这版草稿后，在下方发送「确认」以保存。</view>
+        </block>
+      </view>
+      <view id="{{endId}}" class="chat-end" />
+    </view>
+  </scroll-view>
+  <view wx:if="{{!savedRecipe}}" class="composer">
+    <view wx:if="{{attachment}}" class="attachment-row">
+      <image class="attachment-photo" src="{{attachment.path}}" mode="aspectFill" data-path="{{attachment.path}}" bindtap="previewPhoto" />
+      <text class="muted">发送后用作这份食谱的封面</text>
+      <button size="mini" class="small setup" bindtap="detachImage" disabled="{{!!stage}}">移除</button>
+    </view>
+    <view wx:if="{{audioSeconds}}" class="recording-row">
+      <text class="muted">录音 {{audioSeconds}} 秒</text>
+      <button size="mini" class="small setup" bindtap="discardAudio" disabled="{{!!stage}}">丢弃</button>
+      <button size="mini" class="small send" bindtap="recognize" disabled="{{!!stage}}">{{stage === 'transcribing' ? '正在转写…' : '转为文字'}}</button>
+    </view>
+    <textarea class="message-input" value="{{transcript}}" maxlength="{{transcriptLimit}}" bindinput="input" disabled="{{!!stage}}" placeholder="{{draftOpen ? '继续修改，或发送「确认」保存' : '输入做法、补充或纠正…'}}" aria-label="聊天消息" cursor-spacing="18" />
+    <view class="composer-footer">
+      <view class="composer-tools">
+        <button size="mini" class="small setup" bindtap="attachImage" disabled="{{!!stage || audioSeconds > 0}}">{{attachment ? '换图' : '图片'}}</button>
+        <button wx:if="{{stage === 'recording'}}" size="mini" class="small stop" bindtap="stopRecording">结束录音</button>
+        <button wx:else size="mini" class="small setup" bindtap="startRecording" disabled="{{!!stage || audioSeconds > 0}}">{{stage === 'starting' ? '正在启动…' : (stage === 'stopping' ? '正在结束…' : '录音')}}</button>
+      </view>
+      <button size="mini" class="small send" bindtap="sendMessage" disabled="{{!!stage || (!transcript && !attachment) || audioSeconds > 0}}">{{stage === 'saving' ? '保存中' : (stage === 'chatting' ? '等待回复' : '发送')}}</button>
+    </view>
+  </view>
+  <view wx:else class="composer">
+    <button class="primary saved-action" bindtap="viewSavedRecipe">查看已保存食谱</button>
+  </view>
+</view>

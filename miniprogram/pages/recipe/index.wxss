@@ -1,0 +1,28 @@
+.hero { overflow: hidden; border-radius: 24rpx; height: 500rpx; background: #e7eadb; }
+.heading { margin: 25rpx 0 34rpx; }
+.meta { color: #53694d; font-size: 24rpx; }
+.recipe-name { font-size: 58rpx; line-height: 1.18; overflow-wrap: anywhere; margin-top: 10rpx; }
+.sample { margin-top: 12rpx; font-size: 23rpx; }
+.actions { display: flex; gap: 17rpx; margin-top: 27rpx; }
+.actions button { flex: 1; }
+.favorite-action { gap: 12rpx; }
+.favorite-icon { width: 29rpx; height: 29rpx; }
+.section { padding: 28rpx 0; border-top: 1rpx solid #dce0cf; }
+.section-title { font-size: 40rpx; margin-bottom: 17rpx; }
+.ingredient { width: 100%; min-height: 74rpx; display: flex; text-align: left; align-items: center; gap: 18rpx; border-bottom: 1rpx solid #e6e7db; }
+.ingredient:last-child { border-bottom: 0; }
+.tick { border: 2rpx solid #a1ad96; border-radius: 8rpx; width: 34rpx; height: 34rpx; text-align: center; flex: none; font-size: 22rpx; }
+.checked .tick { background: #294633; color: #fffdf5; border-color: #294633; }
+.ingredient-name { flex: 1; overflow-wrap: anywhere; padding: 12rpx 0; min-width: 0; }
+.ingredient-status { font-size: 22rpx; margin-left: 12rpx; }
+.ingredient-optional { color: #985631; }
+.ingredient-alternative { display: block; font-size: 23rpx; margin-top: 2rpx; }
+.checked .ingredient-name { color: #677363; text-decoration: line-through; }
+.amount { max-width: 40%; text-align: right; overflow-wrap: anywhere; }
+.step { display: flex; align-items: flex-start; gap: 19rpx; padding: 14rpx 0 20rpx; }
+.step-index { flex: none; display: flex; align-items: center; justify-content: center; width: 50rpx; height: 50rpx; color: #294633; background: #e6ebdb; border-radius: 50%; }
+.step-content { flex: 1; min-width: 0; padding-top: 3rpx; }
+.step-photo { width: 100%; display: block; border-radius: 16rpx; margin-top: 14rpx; }
+.body-copy { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.notes { padding: 26rpx; background: #eeeee3; border-radius: 20rpx; margin: 8rpx 0 28rpx; }
+.delete { font-size: 25rpx; color: #9a453a; margin-top: 28rpx; padding: 23rpx; }

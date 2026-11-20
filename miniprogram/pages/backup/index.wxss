@@ -1,0 +1,7 @@
+.headline { font-size: 58rpx; margin: 0 0 14rpx; }
+.intro { margin-bottom: 30rpx; line-height: 1.7; }
+.panel { background: #fffdf6; border: 1rpx solid #dce0cf; border-radius: 22rpx; padding: 26rpx; margin-bottom: 20rpx; }
+.panel-title { font-size: 38rpx; margin-bottom: 8rpx; }
+.panel button { margin-top: 21rpx; }
+.panel .file { margin-top: 12rpx; font-size: 24rpx; overflow-wrap: anywhere; }
+.remove-samples { color: #885248; padding: 25rpx; font-size: 25rpx; margin: 24rpx auto; }
