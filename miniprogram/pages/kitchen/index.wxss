@@ -1,0 +1,6 @@
+@import "../../lib/family-menu.wxss";
+.kitchen-name { margin-top: 26rpx; }
+.kitchen-link { display: block; padding: 20rpx 0; color: #355b41; }
+.share-invite { margin-top: 12rpx; }
+.family-note { width: 100%; min-height: 90rpx; margin-top: 8rpx; }
+.note-label { margin-top: 18rpx; }

@@ -112,6 +112,13 @@ function acceptOrder(order) {
   wx.setStorageSync(ordersKey, [{ ...order, receivedAt: Date.now() }, ...saved])
 }
 
+function importKitchenOrders(incoming) {
+  const saved = listOrders()
+  const ids = new Set(saved.map(item => item.id))
+  const fresh = incoming.filter(item => !ids.has(item.id))
+  if (fresh.length) wx.setStorageSync(ordersKey, [...fresh, ...saved].sort((a, b) => b.receivedAt - a.receivedAt))
+}
+
 function saveShoppingChecks(id, checks) {
   const orders = listOrders()
   const order = orders.find(item => item.id === id)
@@ -136,5 +143,5 @@ function dateLabel(value) {
 
 module.exports = {
   defaultTitle, maxDishes, menuTitle, makeMenuPath, readMenuCard, makeOrder, makeOrderPath, readOrderCard,
-  getMenuDraft, saveMenuDraft, listOrders, acceptOrder, saveShoppingChecks, orderSummary, dateLabel
+  getMenuDraft, saveMenuDraft, listOrders, acceptOrder, importKitchenOrders, saveShoppingChecks, orderSummary, dateLabel
 }

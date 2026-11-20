@@ -1,5 +1,7 @@
 const library = require('../../lib/library')
 const family = require('../../lib/family-menu')
+const kitchen = require('../../lib/kitchen')
+const ownerFlag = 'recipe-gallery.kitchen-owner'
 
 Page({
   data: { tab: 'menu', title: family.defaultTitle, query: '', items: [], total: 0, selected: 0, shareReady: false, orders: [] },
@@ -25,14 +27,55 @@ Page({
       const existing = new Set(this.recipes.map(recipe => recipe.id))
       this.ids = new Set([...this.ids].filter(id => existing.has(id)))
       this.refresh()
-      const orders = family.listOrders().map(order => ({
-        id: order.id, title: order.title, guest: order.guest,
-        dishes: order.dishes.join('、'), count: order.dishes.length, received: family.dateLabel(order.receivedAt)
-      }))
-      this.setData({ orders })
+      this.showOrders()
+      if (this.data.tab === 'orders' && wx.getStorageSync(ownerFlag)) this.syncOrders()
     } catch (error) {
       library.loadingError(error, '无法读取菜单')
     }
+  },
+
+  showOrders() {
+    const orders = family.listOrders().map(order => ({
+      id: order.id, title: order.title, guest: order.guest, dishes: order.dishes.join('、'),
+      count: order.dishes.length, received: family.dateLabel(order.receivedAt)
+    }))
+    this.setData({ orders })
+  },
+  async syncOrders() {
+    if (this.data.syncing) return
+    this.setData({ syncing: true, cloudError: '' })
+    try {
+      let offset = 0
+      let rows
+      const cursorKey = 'recipe-gallery.kitchen-inbox-latest'
+      const cursor = wx.getStorageSync(cursorKey)
+      let newest
+      do {
+        const result = await kitchen.call('orders', { offset })
+        rows = result.orders
+        if (!offset && rows.length) newest = rows[0].id
+        family.importKitchenOrders(rows)
+        offset += rows.length
+      } while (rows.length === 40 && !rows.some(row => row.id === cursor))
+      this.showOrders()
+      if (newest) {
+        wx.setStorageSync(cursorKey, newest)
+        wx.setStorageSync(ownerFlag, true)
+      }
+    } catch (error) { this.setData({ cloudError: error.message || '暂时无法同步' }) }
+    finally { this.setData({ syncing: false }) }
+  },
+  async publish() {
+    if (this.data.publishing) return
+    const dishes = this.recipes.filter(recipe => this.ids.has(recipe.id)).map(({ id, title }) => ({ id, title }))
+    this.setData({ publishing: true, cloudError: '' })
+    try {
+      await kitchen.call('publish', { title: family.menuTitle(this.data.title), dishes })
+      wx.setStorageSync(ownerFlag, true)
+      wx.showToast({ title: '厨房菜单已更新', icon: 'success' })
+      wx.navigateTo({ url: '/pages/kitchen/index' })
+    } catch (error) { this.setData({ cloudError: error.message }) }
+    finally { this.setData({ publishing: false }) }
   },
 
   refresh(changes = {}) {
@@ -59,7 +102,8 @@ Page({
   search(event) { this.refresh({ query: event.detail.value }) },
   switchTab(event) {
     const tab = event.currentTarget.dataset.tab
-    if (tab === 'menu' || tab === 'orders') this.setData({ tab })
+    if (tab === 'menu' || tab === 'orders') this.setData({ tab, cloudError: '' })
+    if (tab === 'orders' && wx.getStorageSync(ownerFlag)) this.syncOrders()
   },
 
   toggleDish(event) {

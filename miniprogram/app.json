@@ -8,7 +8,8 @@
     "pages/voice-settings/index",
     "pages/family-menu/index",
     "pages/family-pick/index",
-    "pages/family-order/index"
+    "pages/family-order/index",
+    "pages/kitchen/index"
   ],
   "window": {
     "navigationBarTitleText": "一勺一记",

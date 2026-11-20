@@ -1,9 +1,11 @@
 <view class="family">
   <view class="title family-title">家庭菜单</view>
+  <navigator class="kitchen-entry" url="/pages/kitchen/index">家庭厨房 · 邀请家人或去点菜 ›</navigator>
   <view class="tabs">
     <button size="mini" class="tab {{tab === 'menu' ? 'active' : ''}}" data-tab="menu" bindtap="switchTab">准备菜单</button>
     <button size="mini" class="tab {{tab === 'orders' ? 'active' : ''}}" data-tab="orders" bindtap="switchTab">收到的点菜单{{orders.length ? ' · ' + orders.length : ''}}</button>
   </view>
+  <view wx:if="{{cloudError}}" class="family-error" role="alert">{{cloudError}}</view>
 
   <block wx:if="{{tab === 'menu'}}">
     <view class="family-lead muted">从画册选菜，发一张菜单给家人。他们选好后会把点菜单发回微信聊天。</view>
@@ -24,6 +26,8 @@
     </view>
     <view wx:else class="empty muted">{{total ? '没有找到匹配的菜。' : '画册还是空的，先记一道菜。'}}</view>
     <view class="family-actions">
+      <button class="secondary" disabled="{{publishing}}" bindtap="publish">发布到我的厨房 · {{selected}} 道</button>
+      <view class="help-text">已绑定的家人可以看到这次发布的菜。发布 0 道会清空可点菜单。</view>
       <button wx:if="{{shareReady}}" class="primary" open-type="share" hover-class="pressed">发菜单给家人</button>
       <button wx:if="{{shareReady}}" class="secondary" bindtap="preview" hover-class="pressed">预览家人看到的菜单</button>
       <button wx:if="{{selected}}" class="secondary" bindtap="copyMenu" hover-class="pressed">复制菜单文字</button>
@@ -32,7 +36,8 @@
   </block>
 
   <block wx:else>
-    <view class="family-lead muted">在微信里打开家人发回的点菜单，再点「收下点菜单」，以后可从这里查看。</view>
+    <view class="family-lead muted">家人提交给你厨房的点菜单会出现在这里。微信卡片点菜单也可在收下后查看。</view>
+    <button class="secondary" disabled="{{syncing}}" bindtap="syncOrders">{{syncing ? '正在同步…' : '刷新厨房点菜单'}}</button>
     <view wx:if="{{orders.length}}" class="pick-list">
       <button wx:for="{{orders}}" wx:key="id" size="mini" class="dish-choice" data-id="{{item.id}}" bindtap="openOrder" hover-class="pressed">
         <view class="choice-title">

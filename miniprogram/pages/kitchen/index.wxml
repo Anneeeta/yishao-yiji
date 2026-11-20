@@ -1,0 +1,51 @@
+<view class="family">
+  <view class="title family-title">{{mode === 'menu' ? menu.title : mode === 'join' ? '厨房邀请' : '家庭厨房'}}</view>
+  <view wx:if="{{error}}" class="family-error" role="alert">{{error}}</view>
+  <block wx:if="{{mode === 'join'}}">
+    <view class="family-lead muted">接受家人的邀请后，可以随时来这里点菜。</view>
+    <button class="primary" bindtap="join" disabled="{{busy}}">接受邀请</button>
+  </block>
+  <block wx:elif="{{mode === 'menu'}}">
+    <block wx:if="{{sent}}">
+      <view class="family-panel">点菜单已送到「{{menu.title}}」，共 {{count}} 道菜。</view>
+      <button class="primary" bindtap="home" disabled="{{busy}}">回到家庭厨房</button>
+    </block>
+    <block wx:else>
+      <view class="family-lead muted">勾选想吃的菜，一起发给这间厨房的主人。</view>
+      <button class="secondary" bindtap="refreshMenu" disabled="{{busy}}">刷新菜单</button>
+      <view class="pick-list">
+        <button wx:for="{{items}}" wx:key="id" class="dish-choice" size="mini" data-id="{{item.id}}" bindtap="toggle" disabled="{{busy}}">
+          <text class="choice-title">{{item.title}}</text><text class="selection-mark {{item.checked ? 'selected' : ''}}">{{item.checked ? '✓' : ''}}</text>
+        </button>
+      </view>
+      <view wx:if="{{!items.length}}" class="help-text">主人暂时没有开放可点的菜。</view>
+      <view class="family-panel">
+        <label class="family-label" for="guest">怎么称呼你（可选）</label>
+        <view class="family-input"><input id="guest" value="{{guest}}" disabled="{{busy}}" maxlength="16" bindinput="guestInput"/></view>
+        <label class="family-label note-label" for="note">备注（可选）</label>
+        <textarea id="note" class="family-note" maxlength="60" value="{{note}}" disabled="{{busy}}" bindinput="noteInput" placeholder="例如，少放辣"/>
+      </view>
+      <button class="primary" disabled="{{busy || !count}}" bindtap="submit">提交给厨房主人 · {{count}} 道菜</button>
+    </block>
+  </block>
+  <block wx:else>
+    <view class="title section-title kitchen-name">家人的厨房</view>
+    <view class="family-panel">
+      <button wx:for="{{joined}}" wx:key="id" class="dish-choice" size="mini" disabled="{{busy}}" data-id="{{item.id}}" bindtap="openMenu">{{item.title}}　›</button>
+      <view wx:if="{{loaded && !joined.length}}" class="help-text">收到家人的厨房邀请卡后，点「接受邀请」，下次就能从这里进。</view>
+      <view wx:if="{{busy}}" class="help-text">正在连接…</view>
+    </view>
+    <button class="secondary" disabled="{{busy}}" bindtap="home">刷新厨房列表</button>
+    <view class="title section-title kitchen-name">我的厨房</view>
+    <view wx:if="{{own}}" class="family-panel">
+      <view>{{own.title}} · {{own.dishes.length}} 道可点</view>
+      <view class="family-actions">
+        <button class="secondary" bindtap="invite" disabled="{{busy}}">{{token ? '重新生成邀请' : '生成单人邀请'}}</button>
+        <button wx:if="{{token}}" class="primary" open-type="share">把邀请发给家人</button>
+      </view>
+      <view wx:if="{{token}}" class="help-text">每张邀请限一人，24 小时内有效。重新生成会替换上一张待用邀请。</view>
+    </view>
+    <navigator class="kitchen-link" url="/pages/family-menu/index">选择并发布可点的菜 ›</navigator>
+    <navigator class="kitchen-link" url="/pages/family-menu/index?tab=orders">收到的点菜单 ›</navigator>
+  </block>
+</view>
